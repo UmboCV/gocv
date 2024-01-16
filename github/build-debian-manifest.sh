@@ -7,6 +7,7 @@ MANIFEST="774915305292.dkr.ecr.us-west-2.amazonaws.com/debian-with-opencv:debian
 IMAGE_ARM="774915305292.dkr.ecr.us-west-2.amazonaws.com/debian-with-opencv:debian-${DEBIAN_VERSION}-opencv-${OPENCV_VERSION}-arm64"
 IMAGE_AMD="774915305292.dkr.ecr.us-west-2.amazonaws.com/debian-with-opencv:debian-${DEBIAN_VERSION}-opencv-${OPENCV_VERSION}-amd64"
 aws ecr get-login --no-include-email --region us-west-2 | bash
+docker manifest rm "${MANIFEST}" || true
 docker manifest create "${MANIFEST}" \
     "${IMAGE_ARM}" \
     "${IMAGE_AMD}"
