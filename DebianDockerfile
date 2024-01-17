@@ -100,21 +100,17 @@ RUN curl -Lo opencv.zip ${OPENCV_FILE} && \
 RUN cd opencv-${OPENCV_VERSION} && \
       mkdir build && cd build && \
       cmake -D CMAKE_BUILD_TYPE=RELEASE \
+      -D WITH_IPP=OFF \
+      -D WITH_OPENGL=OFF \
+      -D WITH_QT=OFF \
       -D CMAKE_INSTALL_PREFIX=/usr/local \
       -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-${OPENCV_VERSION}/modules \
-      -D ENABLE_NEON=ON \
-      -D WITH_FFMPEG=ON \
-      -D WITH_TBB=ON \
-      -D BUILD_TBB=ON \
-      -D BUILD_TESTS=OFF \
-      -D WITH_EIGEN=OFF \
-      -D WITH_GSTREAMER=OFF \
-      -D WITH_V4L=ON \
-      -D WITH_LIBV4L=ON \
-      -D WITH_VTK=OFF \
-      -D WITH_QT=OFF \
-      -D BUILD_JPEG=ON \
       -D OPENCV_ENABLE_NONFREE=ON \
+      -D WITH_JASPER=OFF \
+      -D WITH_TBB=ON \
+      -D BUILD_JPEG=ON \
+      -D WITH_SIMD=ON \
+      -D ENABLE_LIBJPEG_TURBO_SIMD=ON \
       -D BUILD_DOCS=OFF \
       -D BUILD_EXAMPLES=OFF \
       -D BUILD_TESTS=OFF \
@@ -123,8 +119,7 @@ RUN cd opencv-${OPENCV_VERSION} && \
       -D BUILD_opencv_python=NO \
       -D BUILD_opencv_python2=NO \
       -D BUILD_opencv_python3=NO \
-      -D OPENCV_GENERATE_PKGCONFIG=ON \
-      -D CMAKE_TOOLCHAIN_FILE=../platforms/linux/aarch64-gnu.toolchain.cmake .. && \
+      -D OPENCV_GENERATE_PKGCONFIG=ON .. && \
       make -j $(nproc --all) && \
       make preinstall && make install && ldconfig && \
       cd / && rm -rf opencv*
