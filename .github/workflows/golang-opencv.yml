@@ -3,27 +3,27 @@ on:
   workflow_dispatch:
     inputs:
       golang:
-        description: "golang version (ex: 1.21)"
+        description: 'golang version (ex: 1.21)'
         required: true
-        default: "1.21"
+        default: '1.21'
       opencv:
-        description: "opencv version (ex: 4.8.1)"
+        description: 'opencv version (ex: 4.8.1)'
         required: true
-        default: "4.8.1"
+        default: '4.8.1'
 
 jobs:
   build-arm64:
     runs-on: [self-hosted, linux, ARM64]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Build
         run: GOLANG_VERSION=${{ github.event.inputs.golang }} OPENCV_VERSION=${{ github.event.inputs.opencv }} ./github/build-golang-arm64.sh
   build-amd64:
     runs-on: [self-hosted, linux, X64]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Build
         run: GOLANG_VERSION=${{ github.event.inputs.golang }} OPENCV_VERSION=${{ github.event.inputs.opencv }} ./github/build-golang-amd64.sh
   build-manifest:
@@ -31,6 +31,6 @@ jobs:
     needs: [build-arm64, build-amd64]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Build manifest
         run: GOLANG_VERSION=${{ github.event.inputs.golang }} OPENCV_VERSION=${{ github.event.inputs.opencv }} ./github/build-golang-manifest.sh
