@@ -1,17 +1,17 @@
 # OpenCV 4 prebuilt multiarchitecture image
 #
 # To build release:
-#   docker buildx build -f Dockerfile.opencv -t ghcr.io/hybridgroup/opencv:4.8.1 -t ghcr.io/hybridgroup/opencv:latest --platform=linux/arm64,linux/amd64 --push .
+#   docker buildx build -f Dockerfile.opencv -t ghcr.io/hybridgroup/opencv:4.10.0 -t ghcr.io/hybridgroup/opencv:latest --platform=linux/arm64,linux/amd64 --push .
 #
 # To build prerelease:
-#   docker buildx build --build-arg OPENCV_VERSION="4.x" --build-arg OPENCV_FILE="https://github.com/opencv/opencv/archive/refs/heads/4.x.zip" --build-arg OPENCV_CONTRIB_FILE="https://github.com/opencv/opencv_contrib/archive/refs/heads/4.x.zip" -f Dockerfile.opencv -t ghcr.io/hybridgroup/opencv:4.8.1-dev --platform=linux/arm64,linux/amd64 --push .
+#   docker buildx build --build-arg OPENCV_VERSION="4.x" --build-arg OPENCV_FILE="https://github.com/opencv/opencv/archive/refs/heads/4.x.zip" --build-arg OPENCV_CONTRIB_FILE="https://github.com/opencv/opencv_contrib/archive/refs/heads/4.x.zip" -f Dockerfile.opencv -t ghcr.io/hybridgroup/opencv:4.10.0-dev --platform=linux/arm64,linux/amd64 --push .
 
 
 ###################
 # amd64 build stage
 ###################
 
-FROM --platform=linux/amd64 golang:1.21-bullseye AS opencv-base-amd64
+FROM --platform=linux/amd64 golang:1.22-bullseye AS opencv-base-amd64
 LABEL maintainer="hybridgroup"
 
 RUN apt-get update && apt-get install -y \
@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
 
 FROM --platform=linux/amd64 opencv-base-amd64 AS opencv-build-amd64
 
-ARG OPENCV_VERSION="4.8.1"
+ARG OPENCV_VERSION="4.10.0"
 ENV OPENCV_VERSION $OPENCV_VERSION
 
 ARG OPENCV_FILE="https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip"
@@ -70,7 +70,7 @@ RUN cd opencv-${OPENCV_VERSION} && \
 # arm64 build stage
 ###################
 
-FROM --platform=linux/arm64 golang:1.21-bullseye AS opencv-base-arm64
+FROM --platform=linux/arm64 golang:1.22-bullseye AS opencv-base-arm64
 LABEL maintainer="hybridgroup"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
