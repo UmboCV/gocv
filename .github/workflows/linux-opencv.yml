@@ -1,0 +1,36 @@
+name: Build-debian-opencv
+on:
+  workflow_dispatch:
+    inputs:
+      debian:
+        description: "debian version (ex: 11)"
+        required: true
+        default: "11"
+      opencv:
+        description: "opencv version (ex: 4.8.1)"
+        required: true
+        default: "4.8.1"
+
+jobs:
+  build-arm64:
+    runs-on: [self-hosted, linux, ARM64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        run: DEBIAN_VERSION=${{ github.event.inputs.debian }} OPENCV_VERSION=${{ github.event.inputs.opencv }} ./github/build-debian-arm64.sh
+  build-amd64:
+    runs-on: [self-hosted, linux, X64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        run: DEBIAN_VERSION=${{ github.event.inputs.debian }} OPENCV_VERSION=${{ github.event.inputs.opencv }} ./github/build-debian-amd64.sh
+  build-manifest:
+    runs-on: [self-hosted, linux, X64]
+    needs: [build-arm64, build-amd64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build manifest
+        run: DEBIAN_VERSION=${{ github.event.inputs.debian }} OPENCV_VERSION=${{ github.event.inputs.opencv }} ./github/build-debian-manifest.sh
