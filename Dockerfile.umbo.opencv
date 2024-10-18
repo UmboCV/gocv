@@ -11,7 +11,7 @@
 # amd64 build stage
 ###################
 
-FROM --platform=linux/amd64 golang:1.22-bullseye AS opencv-base-amd64
+FROM --platform=linux/amd64 golang:1.23-bullseye AS opencv-base-amd64
 LABEL maintainer="hybridgroup"
 
 RUN apt-get update && apt-get install -y \
@@ -82,7 +82,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 FROM --platform=linux/arm64 opencv-base-arm64 AS opencv-build-arm64
 
-ARG OPENCV_VERSION="4.8.1"
+ARG OPENCV_VERSION="4.10.0"
 ENV OPENCV_VERSION $OPENCV_VERSION
 
 ARG OPENCV_FILE="https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip"
