@@ -60,12 +60,20 @@ void ResetCudaDevice(){
     cv::cuda::resetDevice();
 }
 
+bool CudaDeviceSupports(int features) {
+    return cv::cuda::deviceSupports(cv::cuda::FeatureSet(features));
+}
+
 void GpuMat_ConvertTo(GpuMat m, GpuMat dst, int type, Stream s) {
     if (s == NULL) {
         m->convertTo(*dst, type);
         return;
     }
     m->convertTo(*dst, type, *s);
+}
+
+void GpuMat_ConvertFp16(GpuMat m, GpuMat dst) {
+    cv::cuda::convertFp16(*m, *dst);
 }
 
 void GpuMat_CopyTo(GpuMat m, GpuMat dst, Stream s) {

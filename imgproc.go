@@ -57,6 +57,16 @@ func CvtColor(src Mat, dst *Mat, code ColorConversionCode) {
 	C.CvtColor(src.p, dst.p, C.int(code))
 }
 
+// Demosaicing converts an image from Bayer pattern to RGB or grayscale.
+// It converts the src Mat image to the dst Mat using the
+// code param containing the desired ColorConversionCode color space.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d7/d1b/group__imgproc__color__conversions.html#ga57261f12fccf872a2b2d66daf29d5bd0
+func Demosaicing(src Mat, dst *Mat, code ColorConversionCode) {
+	C.Demosaicing(src.p, dst.p, C.int(code))
+}
+
 // EqualizeHist normalizes the brightness and increases the contrast of the image.
 //
 // For further details, please see:
@@ -1819,9 +1829,10 @@ func GetAffineTransform2f(src, dst Point2fVector) Mat {
 type HomographyMethod int
 
 const (
-	HomograpyMethodAllPoints HomographyMethod = 0
-	HomograpyMethodLMEDS     HomographyMethod = 4
-	HomograpyMethodRANSAC    HomographyMethod = 8
+	HomographyMethodAllPoints HomographyMethod = 0
+	HomographyMethodLMEDS     HomographyMethod = 4
+	HomographyMethodRANSAC    HomographyMethod = 8
+	HomographyMethodRHO       HomographyMethod = 16
 )
 
 // FindHomography finds an optimal homography matrix using 4 or more point pairs (as opposed to GetPerspectiveTransform, which uses exactly 4)

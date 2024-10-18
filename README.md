@@ -4,6 +4,7 @@
 
 [![Go Reference](https://pkg.go.dev/badge/gocv.io/x/gocv.svg)](https://pkg.go.dev/gocv.io/x/gocv)
 [![Linux](https://github.com/hybridgroup/gocv/actions/workflows/linux.yml/badge.svg?branch=dev)](https://github.com/hybridgroup/gocv/actions/workflows/linux.yml)
+[![macOS](https://github.com/hybridgroup/gocv/actions/workflows/macos.yml/badge.svg?branch=dev)](https://github.com/hybridgroup/gocv/actions/workflows/macos.yml)
 [![Windows](https://github.com/hybridgroup/gocv/actions/workflows/windows.yml/badge.svg?branch=dev)](https://github.com/hybridgroup/gocv/actions/workflows/windows.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/hybridgroup/gocv)](https://goreportcard.com/report/github.com/hybridgroup/gocv)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/hybridgroup/gocv/blob/release/LICENSE.txt)
@@ -152,7 +153,7 @@ If you need static opencv libraries
 
 If it works correctly, at the end of the entire process, the following message should be displayed:
 
-    gocv version: 0.37.0
+    gocv version: 0.39.0
     opencv lib version: 4.10.0
 
 That's it, now you are ready to use GoCV.
@@ -178,7 +179,7 @@ If you need static opencv libraries
 
 If it works correctly, at the end of the entire process, the following message should be displayed:
 
-    gocv version: 0.37.0
+    gocv version: 0.39.0
     opencv lib version: 4.10.0-openvino
     cuda information:
       Device 0:  "GeForce MX150"  2003Mb, sm_61, Driver/Runtime ver.10.0/10.0
@@ -240,7 +241,7 @@ Now you should be able to build or run any of the examples:
 
 The version program should output the following:
 
-    gocv version: 0.37.0
+    gocv version: 0.39.0
     opencv lib version: 4.10.0
 
 #### Cleanup extra files
@@ -341,7 +342,7 @@ The following make command should do everything to download and install OpenCV 4
 
 If it works correctly, at the end of the entire process, the following message should be displayed:
 
-    gocv version: 0.37.0
+    gocv version: 0.39.0
     opencv lib version: 4.10.0
 
 That's it, now you are ready to use GoCV.
@@ -381,7 +382,7 @@ Now you should be able to build or run any of the examples:
 
 The version program should output the following:
 
-    gocv version: 0.37.0
+    gocv version: 0.39.0
     opencv lib version: 4.10.0
 
 ### Custom Environment
@@ -408,7 +409,7 @@ In order to build and install OpenCV 4.10.0 on Windows, you must first download 
 
 #### MinGW-W64
 
-Download and run the MinGW-W64 compiler installer from [https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/8.1.0/).
+Download and run the MinGW-W64 compiler installer from [https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/).
 
 The latest version of the MinGW-W64 toolchain is `8.1.0`, but any version from `8.X` on should work.
 
@@ -443,7 +444,7 @@ Now you should be able to build or run any of the command examples:
 
 The version program should output the following:
 
-    gocv version: 0.37.0
+    gocv version: 0.39.0
     opencv lib version: 4.10.0
 
 That's it, now you are ready to use GoCV.

@@ -13,6 +13,26 @@ package cuda
 import "C"
 import "gocv.io/x/gocv"
 
+type FeatureSet int
+
+const (
+	FeatureSetCompute10            FeatureSet = 10
+	FeatureSetCompute11            FeatureSet = 11
+	FeatureSetCompute12            FeatureSet = 12
+	FeatureSetCompute13            FeatureSet = 13
+	FeatureSetCompute20            FeatureSet = 20
+	FeatureSetCompute21            FeatureSet = 21
+	FeatureSetCompute30            FeatureSet = 30
+	FeatureSetCompute32            FeatureSet = 32
+	FeatureSetCompute35            FeatureSet = 35
+	FeatureSetCompute50            FeatureSet = 50
+	FeatureSetGlobalAtomics                   = FeatureSetCompute11
+	FeatureSetSharedAtomics                   = FeatureSetCompute12
+	FeatureSetNativeDouble                    = FeatureSetCompute13
+	FeatureSetWarpShuffleFunctions            = FeatureSetCompute30
+	FeatureSetDynamicParallelism              = FeatureSetCompute35
+)
+
 // GpuMat is the GPU version of a Mat
 //
 // For further details, please see:
@@ -63,6 +83,11 @@ func (g *GpuMat) Close() error {
 	C.GpuMat_Close(g.p)
 	g.p = nil
 	return nil
+}
+
+// Closed determines if the GpuMat is closed or not.
+func (g *GpuMat) Closed() bool {
+	return g.p == nil
 }
 
 // NewGpuMat returns a new empty GpuMat
@@ -127,6 +152,14 @@ func ResetDevice() {
 	C.ResetCudaDevice()
 }
 
+// DeviceSupports checks whether current device supports the given feature.
+//
+// For further details, please see:
+// https://docs.opencv.org/4.x/d8/d40/group__cudacore__init.html#ga170b10cc9af4aa8cce8c0afdb4b1d08c
+func DeviceSupports(feature FeatureSet) bool {
+	return bool(C.CudaDeviceSupports(C.int(feature)))
+}
+
 // ConvertTo converts GpuMat into destination GpuMat.
 //
 // For further details, please see:
@@ -142,6 +175,15 @@ func (m *GpuMat) ConvertTo(dst *GpuMat, mt gocv.MatType) {
 // https://docs.opencv.org/master/d0/d60/classcv_1_1cuda_1_1GpuMat.html#a3a1b076e54d8a8503014e27a5440d98a
 func (m *GpuMat) ConvertToWithStream(dst *GpuMat, mt gocv.MatType, s Stream) {
 	C.GpuMat_ConvertTo(m.p, dst.p, C.int(mt), s.p)
+	return
+}
+
+// ConvertFp16 converts an array to half precision floating number.
+//
+// For further details, please see:
+// https://docs.opencv.org/4.x/d8/d40/group__cudacore__init.html#gaa1c52258763197958eb9e6681917f723
+func (m *GpuMat) ConvertFp16(dst *GpuMat) {
+	C.GpuMat_ConvertFp16(m.p, dst.p)
 	return
 }
 

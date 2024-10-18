@@ -8,7 +8,11 @@ package cuda
 */
 import "C"
 
-import "gocv.io/x/gocv"
+import (
+	"unsafe"
+
+	"gocv.io/x/gocv"
+)
 
 // Abs computes an absolute value of each matrix element.
 //
@@ -317,4 +321,209 @@ func Flip(src GpuMat, dst *GpuMat, flipCode int) {
 // https://docs.opencv.org/master/de/d09/group__cudaarithm__core.html#ga4d0a3f2b46e8f0f1ec2b5ac178dcd871
 func FlipWithStream(src GpuMat, dst *GpuMat, flipCode int, stream Stream) {
 	C.GpuFlip(src.p, dst.p, C.int(flipCode), stream.p)
+}
+
+// Merge makes a multi-channel matrix out of several single-channel matrices.
+//
+// For further details, please see:
+// https://docs.opencv.org/4.x/de/d09/group__cudaarithm__core.html#gafce19eb0fcad23f67ab45d544992436d
+func Merge(mv []GpuMat, dst *GpuMat) {
+	cMatArray := make([]C.GpuMat, len(mv))
+	for i, r := range mv {
+		cMatArray[i] = r.p
+	}
+	cMats := C.GpuMats{
+		mats:   (*C.GpuMat)(&cMatArray[0]),
+		length: C.int(len(mv)),
+	}
+
+	C.GpuMerge(cMats, dst.p, nil)
+}
+
+// MergeWithStream makes a multi-channel matrix out of several single-channel matrices
+// using a Stream for concurrency.
+//
+// For further details, please see:
+// https://docs.opencv.org/4.x/de/d09/group__cudaarithm__core.html#gafce19eb0fcad23f67ab45d544992436d
+func MergeWithStream(mv []GpuMat, dst *GpuMat, s Stream) {
+	cMatArray := make([]C.GpuMat, len(mv))
+	for i, r := range mv {
+		cMatArray[i] = r.p
+	}
+	cMats := C.GpuMats{
+		mats:   (*C.GpuMat)(&cMatArray[0]),
+		length: C.int(len(mv)),
+	}
+
+	C.GpuMerge(cMats, dst.p, s.p)
+}
+
+// Transpose transposes a matrix.
+//
+// For further details, please see:
+// https://docs.opencv.org/4.x/de/d09/group__cudaarithm__core.html#ga327b71c3cb811a904ccf5fba37fc29f2
+func Transpose(src GpuMat, dst *GpuMat) {
+	C.GpuTranspose(src.p, dst.p, nil)
+}
+
+// Transpose transposes a matrix using a Stream for concurrency.
+//
+// For further details, please see:
+// https://docs.opencv.org/4.x/de/d09/group__cudaarithm__core.html#ga327b71c3cb811a904ccf5fba37fc29f2
+func TransposeWithStream(src GpuMat, dst *GpuMat, s Stream) {
+	C.GpuTranspose(src.p, dst.p, s.p)
+}
+
+// AddWeighted computes a weighted sum of two matrices.
+//
+// For further details, please see:
+// https://docs.opencv.org/4.x/d8/d34/group__cudaarithm__elem.html#ga2cd14a684ea70c6ab2a63ee90ffe6201
+func AddWeighted(src1 GpuMat, alpha float64, src2 GpuMat, beta float64, gamma float64, dst *GpuMat, dType int) {
+	C.GpuAddWeighted(src1.p, C.double(alpha), src2.p, C.double(beta), C.double(gamma), dst.p, C.int(dType), nil)
+}
+
+// AddWeightedWithStream computes a weighted sum of two matrices using a Stream for concurrency.
+//
+// For further details, please see:
+// https://docs.opencv.org/4.x/d8/d34/group__cudaarithm__elem.html#ga2cd14a684ea70c6ab2a63ee90ffe6201
+func AddWeightedWithStream(src1 GpuMat, alpha float64, src2 GpuMat, beta float64, gamma float64, dst *GpuMat, dType int, s Stream) {
+	C.GpuAddWeighted(src1.p, C.double(alpha), src2.p, C.double(beta), C.double(gamma), dst.p, C.int(dType), s.p)
+}
+
+// CopyMakeBorder forms a border around an image.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/de/d09/group__cudaarithm__core.html#ga5368db7656eacf846b40089c98053a49
+func CopyMakeBorder(src GpuMat, dst *GpuMat, top, bottom, left, right int, borderType gocv.BorderType, value gocv.Scalar) {
+	bv := C.struct_Scalar{
+		val1: C.double(value.Val1),
+		val2: C.double(value.Val2),
+		val3: C.double(value.Val3),
+		val4: C.double(value.Val4),
+	}
+
+	C.GpuCopyMakeBorder(src.p, dst.p, C.int(top), C.int(bottom), C.int(left), C.int(right), C.int(borderType), bv, nil)
+}
+
+// CopyMakeBorderWithStream forms a border around an image using a Stream for concurrency.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/de/d09/group__cudaarithm__core.html#ga5368db7656eacf846b40089c98053a49
+func CopyMakeBorderWithStream(src GpuMat, dst *GpuMat, top, bottom, left, right int, borderType gocv.BorderType, value gocv.Scalar, s Stream) {
+	bv := C.struct_Scalar{
+		val1: C.double(value.Val1),
+		val2: C.double(value.Val2),
+		val3: C.double(value.Val3),
+		val4: C.double(value.Val4),
+	}
+
+	C.GpuCopyMakeBorder(src.p, dst.p, C.int(top), C.int(bottom), C.int(left), C.int(right), C.int(borderType), bv, s.p)
+}
+
+type LookUpTable struct {
+	p C.LookUpTable
+}
+
+// NewLookUpTable Creates implementation for cuda::LookUpTable .
+//
+// lut	Look-up table of 256 elements. It is a continuous CV_8U matrix.
+//
+// For further details, please see:
+// https://docs.opencv.org/4.x/de/d09/group__cudaarithm__core.html#gaa75254a07dcf7996b4b5a68d383847f8
+func NewLookUpTable(lut GpuMat) LookUpTable {
+	return LookUpTable{p: C.Cuda_Create_LookUpTable(lut.p)}
+}
+
+// Close releases LookUpTable resources.
+func (lt *LookUpTable) Close() {
+	C.Cuda_LookUpTable_Close(lt.p)
+}
+
+// Transform Transforms the source matrix into the destination
+// matrix using the given look-up table: dst(I) = lut(src(I)) .
+//
+// src: Source matrix. CV_8UC1 and CV_8UC3 matrices are supported for now.
+//
+// dst: Destination matrix.
+//
+// For further details, please see:
+// https://docs.opencv.org/4.x/df/d29/classcv_1_1cuda_1_1LookUpTable.html#afdbcbd3047f847451892f3b18cd018de
+func (lt *LookUpTable) Transform(src GpuMat, dst *GpuMat) {
+	C.Cuda_LookUpTable_Transform(lt.p, src.p, dst.p, nil)
+}
+
+// Empty Returns true if the Algorithm is empty
+// (e.g. in the very beginning or after unsuccessful read.
+//
+// For further details, please see:
+// https://docs.opencv.org/4.x/d3/d46/classcv_1_1Algorithm.html#a827c8b2781ed17574805f373e6054ff1
+func (lt *LookUpTable) Empty() bool {
+	b := C.Cuda_LookUpTable_Empty(lt.p)
+
+	return bool(b)
+}
+
+// TransformWithStream Transforms the source matrix into the destination
+// matrix using the given look-up table: dst(I) = lut(src(I)) .
+//
+// src: Source matrix. CV_8UC1 and CV_8UC3 matrices are supported for now.
+//
+// dst: Destination matrix.
+//
+// stream: Stream for the asynchronous version.
+//
+// For further details, please see:
+// https://docs.opencv.org/4.x/df/d29/classcv_1_1cuda_1_1LookUpTable.html#afdbcbd3047f847451892f3b18cd018de
+func (lt *LookUpTable) TransformWithStream(src GpuMat, dst *GpuMat, s Stream) {
+	C.Cuda_LookUpTable_Transform(lt.p, src.p, dst.p, s.p)
+}
+
+// Split Copies each plane of a multi-channel matrix into an array.
+//
+// src: Source matrix.
+//
+// dst: Destination array/vector of single-channel matrices.
+//
+// For further details, please see:
+// https://docs.opencv.org/4.x/de/d09/group__cudaarithm__core.html#gaf1714e7a9ea0719c29bf378beaf5f99d
+func Split(src GpuMat, dst []GpuMat) {
+
+	dstv := make([]C.GpuMat, len(dst))
+
+	for i := range dst {
+		dstv[i] = dst[i].p
+	}
+
+	c_dstv := C.GpuMats{
+		mats:   unsafe.SliceData(dstv),
+		length: C.int(len(dstv)),
+	}
+
+	C.Cuda_Split(src.p, c_dstv, nil)
+}
+
+// SplitWithStream Copies each plane of a multi-channel matrix into an array.
+//
+// src: Source matrix.
+//
+// dst: Destination array/vector of single-channel matrices.
+//
+// stream: Stream for the asynchronous version.
+//
+// For further details, please see:
+// https://docs.opencv.org/4.x/de/d09/group__cudaarithm__core.html#gaf1714e7a9ea0719c29bf378beaf5f99d
+func SplitWithStream(src GpuMat, dst []GpuMat, s Stream) {
+
+	dstv := make([]C.GpuMat, len(dst))
+
+	for i := range dst {
+		dstv[i] = dst[i].p
+	}
+
+	c_dstv := C.GpuMats{
+		mats:   unsafe.SliceData(dstv),
+		length: C.int(len(dstv)),
+	}
+
+	C.Cuda_Split(src.p, c_dstv, s.p)
 }

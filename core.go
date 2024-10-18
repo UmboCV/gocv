@@ -55,6 +55,9 @@ const (
 	// MatTypeCV64F is a Mat of 64-bit float
 	MatTypeCV64F MatType = 6
 
+	// MatTypeCV16F is a Mat of 16-bit (half) float
+	MatTypeCV16F MatType = 7
+
 	// MatTypeCV8UC1 is a Mat of 8-bit unsigned int with a single channel
 	MatTypeCV8UC1 = MatTypeCV8U + MatChannels1
 
@@ -135,6 +138,18 @@ const (
 
 	// MatTypeCV64FC4 is a Mat of 64-bit float int with 4 channels
 	MatTypeCV64FC4 = MatTypeCV64F + MatChannels4
+
+	// MatTypeCV16FC1 is a Mat of 16-bit float with a single channel
+	MatTypeCV16FC1 = MatTypeCV16F + MatChannels1
+
+	// MatTypeCV16FC2 is a Mat of 16-bit float with 2 channels
+	MatTypeCV16FC2 = MatTypeCV16F + MatChannels2
+
+	// MatTypeCV16FC3 is a Mat of 16-bit float with 3 channels
+	MatTypeCV16FC3 = MatTypeCV16F + MatChannels3
+
+	// MatTypeCV16FC4 is a Mat of 16-bit float with 4 channels
+	MatTypeCV16FC4 = MatTypeCV16F + MatChannels4
 )
 
 // CompareType is used for Compare operations to indicate which kind of
@@ -189,6 +204,11 @@ type Mat struct {
 // NewMat returns a new empty Mat.
 func NewMat() Mat {
 	return newMat(C.Mat_New())
+}
+
+// NewMatFromCMat returns a new Mat from an unsafe.Pointer(C.Mat).
+func NewMatFromCMat(c_mat unsafe.Pointer) Mat {
+	return newMat(C.Mat(c_mat))
 }
 
 // NewMatWithSize returns a new Mat with a specific size and type.
@@ -333,6 +353,11 @@ func (m *Mat) Ptr() C.Mat {
 func (m *Mat) Empty() bool {
 	isEmpty := C.Mat_Empty(m.p)
 	return isEmpty != 0
+}
+
+// Closed determines if the Mat is closed or not.
+func (m *Mat) Closed() bool {
+	return m.p == nil
 }
 
 // IsContinuous determines if the Mat is continuous.
@@ -1905,6 +1930,24 @@ func Transpose(src Mat, dst *Mat) {
 	C.Mat_Transpose(src.p, dst.p)
 }
 
+// TransposeND transpose for n-dimensional matrices.
+//
+// For further details, please see:
+// https://docs.opencv.org/master/d2/de8/group__core__array.html#gab1b1274b4a563be34cdfa55b8919a4ec
+func TransposeND(src Mat, order []int, dst *Mat) {
+	cOrderArray := make([]C.int, len(order))
+	for i, o := range order {
+		cOrderArray[i] = C.int(o)
+	}
+
+	cOrderVector := C.IntVector{
+		val:    (*C.int)(&cOrderArray[0]),
+		length: C.int(len(order)),
+	}
+
+	C.Mat_TransposeND(src.p, cOrderVector, dst.p)
+}
+
 // Pow raises every array element to a power.
 //
 // For further details, please see:
@@ -1940,6 +1983,11 @@ type TermCriteria struct {
 // NewTermCriteria returns a new TermCriteria.
 func NewTermCriteria(typ TermCriteriaType, maxCount int, epsilon float64) TermCriteria {
 	return TermCriteria{p: C.TermCriteria_New(C.int(typ), C.int(maxCount), C.double(epsilon))}
+}
+
+// Ptr returns the underlying C.TermCriteria
+func (tc *TermCriteria) Ptr() C.TermCriteria {
+	return tc.p
 }
 
 // Scalar is a 4-element vector widely used in OpenCV to pass pixel values.
@@ -2836,4 +2884,51 @@ func SetNumThreads(n int) {
 // Get the number of threads for OpenCV.
 func GetNumThreads() int {
 	return int(C.GetNumThreads())
+}
+
+// NewRotatedRect creates [RotatedRect] (i.e. not up-right) rectangle on a plane.
+//
+// For further information, see:
+// https://docs.opencv.org/4.x/db/dd6/classcv_1_1RotatedRect.html#aba20dfc8444fff72bd820b616f0297ee
+func NewRotatedRect(center image.Point, width int, height int, angle float64) RotatedRect {
+
+	p2f := C.struct_Point2f{
+		x: C.float(float32(center.X)),
+		y: C.float(float32(center.Y)),
+	}
+
+	c_rotRect := C.RotatedRect_Create(p2f, C.int(width), C.int(height), C.float(angle))
+	defer C.Points_Close(c_rotRect.pts)
+
+	return RotatedRect{
+		Points:       toPoints(c_rotRect.pts),
+		BoundingRect: image.Rect(int(c_rotRect.boundingRect.x), int(c_rotRect.boundingRect.y), int(c_rotRect.boundingRect.x)+int(c_rotRect.boundingRect.width), int(c_rotRect.boundingRect.y)+int(c_rotRect.boundingRect.height)),
+		Center:       image.Pt(int(c_rotRect.center.x), int(c_rotRect.center.y)),
+		Width:        int(c_rotRect.size.width),
+		Height:       int(c_rotRect.size.height),
+		Angle:        float64(c_rotRect.angle),
+	}
+
+}
+
+// NewRotatedRect2f creates [RotatedRect2f] (i.e. not up-right) rectangle on a plane.
+//
+// For further information, see:
+// https://docs.opencv.org/4.x/db/dd6/classcv_1_1RotatedRect.html#aba20dfc8444fff72bd820b616f0297ee
+func NewRotatedRect2f(center Point2f, width float32, height float32, angle float64) RotatedRect2f {
+	p2f := C.struct_Point2f{
+		x: C.float(center.X),
+		y: C.float(center.Y),
+	}
+	c_rotRect2f := C.RotatedRect2f_Create(p2f, C.float(width), C.float(height), C.float(angle))
+	defer C.Points2f_Close(c_rotRect2f.pts)
+
+	return RotatedRect2f{
+		Points:       toPoints2f(c_rotRect2f.pts),
+		BoundingRect: image.Rect(int(c_rotRect2f.boundingRect.x), int(c_rotRect2f.boundingRect.y), int(c_rotRect2f.boundingRect.x)+int(c_rotRect2f.boundingRect.width), int(c_rotRect2f.boundingRect.y)+int(c_rotRect2f.boundingRect.height)),
+		Center:       NewPoint2f(float32(c_rotRect2f.center.x), float32(c_rotRect2f.center.y)),
+		Width:        float32(c_rotRect2f.size.width),
+		Height:       float32(c_rotRect2f.size.height),
+		Angle:        float64(c_rotRect2f.angle),
+	}
 }

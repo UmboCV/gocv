@@ -97,6 +97,18 @@ func TestVideoCaptureWithAPI(t *testing.T) {
 	})
 }
 
+func TestVideoCaptureWithAPIParams(t *testing.T) {
+	vc, _ := OpenVideoCaptureWithAPIParams(0, VideoCaptureAny, []VideoCaptureProperties{VideoCaptureHWAcceleration, 1, VideoCaptureHWDevice, 0})
+	defer vc.Close()
+
+}
+
+func TestVideoCaptureFileWithAPIParams(t *testing.T) {
+	vc, _ := OpenVideoCaptureWithAPIParams("images/small.mp4", VideoCaptureAny, []VideoCaptureProperties{VideoCaptureHWAcceleration, 1, VideoCaptureHWDevice, 0})
+	defer vc.Close()
+
+}
+
 func TestVideoCaptureFile(t *testing.T) {
 	vc, err := VideoCaptureFile("images/small.mp4")
 	defer vc.Close()
@@ -232,4 +244,47 @@ func TestVideoCaptureFile_GrabRetrieve(t *testing.T) {
 	if img.Empty() {
 		t.Error("Unable to read VideoCaptureFile")
 	}
+}
+
+func TestVideoRegistry(t *testing.T) {
+
+	name := VideoRegistry.GetBackendName(VideoCaptureFFmpeg)
+	t.Log("VideoRegistry.GetBackendName()", name)
+
+	backs := VideoRegistry.GetBackends()
+	for _, b := range backs {
+		t.Log("VideoRegistry.GetBackends()", b.String())
+	}
+
+	cameraBacks := VideoRegistry.GetCameraBackends()
+	for _, b := range cameraBacks {
+		t.Log("VideoRegistry.GetCameraBackends()", b.String())
+		if !VideoRegistry.IsBackendBuiltIn(b) && VideoRegistry.HasBackend(b) {
+
+			description, abiVersion, apiVersion := VideoRegistry.GetCameraBackendPluginVersion(b)
+			t.Log("VideoRegistry.GetCameraBackendPluginVersion()", description, abiVersion, apiVersion)
+		}
+	}
+
+	streamBacks := VideoRegistry.GetStreamBackends()
+	for _, b := range streamBacks {
+		t.Log("VideoRegistry.GetStreamBackends()", b.String())
+		if !VideoRegistry.IsBackendBuiltIn(b) && VideoRegistry.HasBackend(b) {
+
+			description, abiVersion, apiVersion := VideoRegistry.GetStreamBackendPluginVersion(b)
+			t.Log("VideoRegistry.GetStreamBackendPluginVersion()", description, abiVersion, apiVersion)
+		}
+	}
+
+	writerBacks := VideoRegistry.GetWriterBackends()
+
+	for _, b := range writerBacks {
+		t.Log("VideoRegistry.GetWriterBackends()", b.String())
+		if !VideoRegistry.IsBackendBuiltIn(b) && VideoRegistry.HasBackend(b) {
+
+			description, abiVersion, apiVersion := VideoRegistry.GetWriterBackendPluginVersion(b)
+			t.Log("VideoRegistry.GetWriterBackendPluginVersion()", description, abiVersion, apiVersion)
+		}
+	}
+
 }

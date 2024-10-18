@@ -2,6 +2,12 @@
 
 GoCV comes with various useful command line utilities, that are also examples of how to use the package.
 
+## ASCIIcam
+
+Capture video from a connected webcam, and display it in the current terminal window in ASCII format.
+
+https://github.com/hybridgroup/gocv/blob/release/cmd/asciicam/main.go
+
 ## Basic Drawing
 
 Demonstrates the basic drawing primitives available for drawing on images.
@@ -169,3 +175,9 @@ https://github.com/hybridgroup/gocv/blob/release/cmd/version/main.go
 This example demonstrates a couple different uses of the XPhoto module. It can use the GrayworldWB class with BalanceWhite image to save an image file on disk. It can also use the Inpaint functions with inpaint algorithms type to save an image file on disk.
 
 https://github.com/hybridgroup/gocv/blob/release/cmd/xphoto/main.go
+
+## YOLO DNN Detection
+
+Use the YOLOv8 Deep Neural Network to detect and track objects or faces.
+
+https://github.com/hybridgroup/gocv/blob/release/cmd/yolo-detection/main.go

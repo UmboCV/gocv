@@ -19,6 +19,14 @@ func TestMat(t *testing.T) {
 	}
 }
 
+func TestMatClosed(t *testing.T) {
+	mat := NewMat()
+	mat.Close()
+	if !mat.Closed() {
+		t.Error("Closed Mat should be closed")
+	}
+}
+
 func TestMatWithSizes(t *testing.T) {
 	t.Run("create mat with multidimensional array", func(t *testing.T) {
 		sizes := []int{100, 100, 100}
@@ -1862,6 +1870,26 @@ func TestMatTranspose(t *testing.T) {
 	}
 }
 
+func TestMatTransposeND(t *testing.T) {
+	rows := 1
+	cols := 3
+	src := NewMatWithSize(rows, cols, MatTypeCV8U)
+	defer src.Close()
+
+	for row := 0; row < rows; row++ {
+		for col := 0; col < cols; col++ {
+			src.SetUCharAt(row, col, uint8(col))
+		}
+	}
+
+	dst := NewMat()
+	defer dst.Close()
+	TransposeND(src, []int{1, 0}, &dst)
+	if dst.Empty() {
+		t.Error("TransposeND error")
+	}
+}
+
 func TestPolarToCart(t *testing.T) {
 	magnitude := NewMatWithSize(101, 102, MatTypeCV32F)
 	angle := NewMatWithSize(101, 102, MatTypeCV32F)
@@ -3360,4 +3388,27 @@ func TestMinMaxLocWithMask(t *testing.T) {
 	if maxLoc != wantMaxLoc {
 		t.Errorf("maxLoc got: %v, want %v", maxLoc, wantMaxLoc)
 	}
+}
+
+func TestNewRotatedRect(t *testing.T) {
+
+	rr := NewRotatedRect(image.Pt(1, 1), 10, 10, 75.0)
+	if rr.Angle != 75.0 {
+		t.Errorf("NewRotatedRect not working as intended")
+	}
+
+}
+
+func TestNewRotatedRect2f(t *testing.T) {
+
+	pts := Point2f{
+		X: 1.5,
+		Y: 1.5,
+	}
+
+	rr := NewRotatedRect2f(pts, 10.5, 10.5, 75.0)
+	if rr.Angle != 75.0 {
+		t.Errorf("NewRotatedRect not working as intended")
+	}
+
 }

@@ -18,6 +18,12 @@ typedef void* GpuMat;
 typedef void* Stream;
 #endif
 
+// Wrapper for the vector of GpuMat aka std::vector<GpuMat>
+typedef struct GpuMats {
+    GpuMat* mats;
+    int length;
+} GpuMats;
+
 GpuMat GpuMat_New();
 GpuMat GpuMat_NewFromMat(Mat mat);
 GpuMat GpuMat_NewWithSize(int rows, int cols, int type);
@@ -26,6 +32,7 @@ void GpuMat_Download(GpuMat m, Mat dst, Stream s);
 void GpuMat_Close(GpuMat m);
 int GpuMat_Empty(GpuMat m);
 void GpuMat_ConvertTo(GpuMat m, GpuMat dst, int type, Stream s);
+void GpuMat_ConvertFp16(GpuMat m, GpuMat dst);
 void GpuMat_CopyTo(GpuMat m, GpuMat dst, Stream s);
 GpuMat GpuMat_Reshape(GpuMat m, int cn, int rows);
 int GpuMat_Cols(GpuMat m);
@@ -39,6 +46,7 @@ int GetCudaEnabledDeviceCount();
 int GetCudaDevice();
 void SetCudaDevice(int device);
 void ResetCudaDevice();
+bool CudaDeviceSupports(int features);
 
 Stream Stream_New();
 void Stream_Close(Stream s);

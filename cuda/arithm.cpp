@@ -146,3 +146,81 @@ void GpuFlip(GpuMat src, GpuMat dst, int flipCode, Stream s) {
     }
     cv::cuda::flip(*src, *dst, flipCode, *s);
 }
+
+void GpuMerge(struct GpuMats mats, GpuMat dst, Stream s) {
+    std::vector<cv::cuda::GpuMat> images;
+
+    for (int i = 0; i < mats.length; ++i) {
+        images.push_back(*mats.mats[i]);
+    }
+
+    if (s == NULL) {
+        cv::cuda::merge(images, *dst);
+        return;
+    }
+    cv::cuda::merge(images, *dst, *s);
+}
+
+void GpuTranspose(GpuMat src, GpuMat dst, Stream s) {
+    if (s == NULL) {
+        cv::cuda::transpose(*src, *dst);
+        return;
+    }
+    cv::cuda::transpose(*src, *dst, *s);
+}
+
+void GpuAddWeighted(GpuMat src1, double alpha, GpuMat src2, double beta, double gamma, GpuMat dst, int dType, Stream s) {
+    if (s == NULL) {
+        cv::cuda::addWeighted(*src1, alpha, *src2, beta, gamma, *dst, dType);
+        return;
+    }
+
+    cv::cuda::addWeighted(*src1, alpha, *src2, beta, gamma, *dst, dType, *s);
+}
+
+void GpuCopyMakeBorder(GpuMat src, GpuMat dst, int top, int bottom, int left, int right, int borderType, Scalar value, Stream s) {
+    cv::Scalar cValue = cv::Scalar(value.val1, value.val2, value.val3, value.val4);
+
+    if (s == NULL) {
+        cv::cuda::copyMakeBorder(*src, *dst, top, bottom, left, right, borderType, cValue);
+        return;
+    }
+    cv::cuda::copyMakeBorder(*src, *dst, top, bottom, left, right, borderType, cValue, *s);
+}
+
+LookUpTable Cuda_Create_LookUpTable(GpuMat lut){
+    return new cv::Ptr<cv::cuda::LookUpTable>(cv::cuda::createLookUpTable(*lut));
+}
+
+void Cuda_LookUpTable_Close(LookUpTable lt) {
+    delete lt;
+}
+
+bool Cuda_LookUpTable_Empty(LookUpTable lut) {
+    return lut->empty();
+}
+
+void Cuda_LookUpTable_Transform(LookUpTable lt, GpuMat src, GpuMat dst, Stream s) {
+    cv::Ptr< cv::cuda::LookUpTable> p = cv::Ptr< cv::cuda::LookUpTable>(*lt);
+
+    if(s == NULL) {
+        p->transform(*src, *dst);
+    } else {
+        p->transform(*src, *dst, *s);
+    }
+}
+
+void Cuda_Split(GpuMat src, GpuMats dst, Stream s) {
+    std::vector< cv::cuda::GpuMat > dstv;
+
+    for(int i = 0; i < dst.length; i++) {
+        dstv.push_back(*(dst.mats[i]));
+    }
+
+    if(s == NULL){
+        cv::cuda::split(*src, dstv);
+    } else {
+        cv::cuda::split(*src, dstv, *s);
+    }
+
+}

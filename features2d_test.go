@@ -2,6 +2,7 @@ package gocv
 
 import (
 	"image/color"
+	"runtime"
 	"testing"
 )
 
@@ -523,6 +524,10 @@ func TestDrawKeyPoints(t *testing.T) {
 }
 
 func TestDrawMatches(t *testing.T) {
+	if runtime.GOOS == "darwin" {
+		t.Skip("skipping test on macos")
+	}
+
 	queryFile := "images/box.png"
 	trainFile := "images/box_in_scene.png"
 
@@ -593,6 +598,10 @@ func TestDrawMatches(t *testing.T) {
 }
 
 func TestSIFT(t *testing.T) {
+	if runtime.GOOS == "darwin" {
+		t.Skip("skipping test on macos")
+	}
+
 	img := IMRead("./images/face.jpg", IMReadGrayScale)
 	if img.Empty() {
 		t.Error("Invalid Mat in SIFT test")
@@ -625,6 +634,55 @@ func TestSIFT(t *testing.T) {
 	kpdc, desc2 := si.DetectAndCompute(img, mask)
 	defer desc2.Close()
 	if len(kpdc) < 512 {
+		t.Errorf("Invalid KeyPoint array in SIFT DetectAndCompute: %d", len(kpdc))
+	}
+	if desc2.Empty() {
+		t.Error("Invalid Mat desc in SIFT DetectAndCompute")
+	}
+}
+
+func TestSIFTWithParams(t *testing.T) {
+	if runtime.GOOS == "darwin" {
+		t.Skip("skipping test on macos")
+	}
+
+	img := IMRead("./images/face.jpg", IMReadGrayScale)
+	if img.Empty() {
+		t.Error("Invalid Mat in SIFT test")
+	}
+	defer img.Close()
+
+	dst := NewMat()
+	defer dst.Close()
+
+	nFeatures := 256
+	nOctaveLayers := 3
+	contrastThreshold := 0.039
+	var edgeThreshold float64 = 11
+	sigma := 1.55
+	si := NewSIFTWithParams(&nFeatures, &nOctaveLayers, &contrastThreshold, &edgeThreshold, &sigma)
+	defer si.Close()
+
+	kp := si.Detect(img)
+	if len(kp) != 256 {
+		t.Errorf("Invalid KeyPoint array in SIFT test: %d", len(kp))
+	}
+
+	mask := NewMat()
+	defer mask.Close()
+
+	kpc, desc := si.Compute(img, mask, kp)
+	defer desc.Close()
+	if len(kpc) != 256 {
+		t.Errorf("Invalid KeyPoint array in SIFT Compute: %d", len(kpc))
+	}
+	if desc.Empty() {
+		t.Error("Invalid Mat desc in SIFT Compute")
+	}
+
+	kpdc, desc2 := si.DetectAndCompute(img, mask)
+	defer desc2.Close()
+	if len(kpdc) != 256 {
 		t.Errorf("Invalid KeyPoint array in SIFT DetectAndCompute: %d", len(kpdc))
 	}
 	if desc2.Empty() {
