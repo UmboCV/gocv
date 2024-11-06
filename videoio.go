@@ -119,7 +119,7 @@ const (
 )
 
 // VideoCaptureProperties are the properties used for VideoCapture operations.
-type VideoCaptureProperties int
+type VideoCaptureProperties int32
 
 const (
 	// VideoCapturePosMsec contains current position of the
