@@ -12,7 +12,7 @@ docker buildx build --no-cache --pull \
   --platform linux/arm64 \
   -t "${IMAGE}" \
   --build-arg OPENCV_VERSION=$OPENCV_VERSION \
-  -f Dockerfile.umbo.opencv .
+  -f Dockerfile.umbo.golang .
 aws ecr get-login --no-include-email --region us-west-2 | bash
 # Push docker images
 docker push "${IMAGE}"
