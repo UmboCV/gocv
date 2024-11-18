@@ -11,7 +11,7 @@
 # amd64 build stage
 ###################
 
-FROM --platform=linux/amd64 golang:1.23-bullseye AS opencv-base-amd64
+FROM --platform=linux/amd64 ubuntu:22.04 AS opencv-base-amd64
 LABEL maintainer="hybridgroup"
 
 RUN apt-get update && apt-get install -y \
@@ -23,6 +23,19 @@ RUN apt-get update && apt-get install -y \
 
 FROM --platform=linux/amd64 opencv-base-amd64 AS opencv-build-amd64
 
+# install golang
+ARG GOLANG_VERSION
+ENV GOLANG_VERSION=${GOLANG_VERSION}
+
+RUN wget -P /tmp "https://dl.google.com/go/go${GOLANG_VERSION}.linux-amd64.tar.gz"
+RUN tar -C /usr/local -xzf "/tmp/go${GOLANG_VERSION}.linux-amd64.tar.gz"
+RUN rm "/tmp/go${GOLANG_VERSION}.linux-amd64.tar.gz"
+
+ENV GOPATH /go
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+
+# install opencv
 ARG OPENCV_VERSION="4.10.0"
 ENV OPENCV_VERSION $OPENCV_VERSION
 
@@ -70,7 +83,7 @@ RUN cd opencv-${OPENCV_VERSION} && \
 # arm64 build stage
 ###################
 
-FROM --platform=linux/arm64 golang:1.23-bullseye AS opencv-base-arm64
+FROM --platform=linux/arm64 ubuntu:22.04 AS opencv-base-arm64
 LABEL maintainer="hybridgroup"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -82,6 +95,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 FROM --platform=linux/arm64 opencv-base-arm64 AS opencv-build-arm64
 
+# install golang
+ARG GOLANG_VERSION
+ENV GOLANG_VERSION=${GOLANG_VERSION}
+
+RUN wget -P /tmp "https://dl.google.com/go/go${GOLANG_VERSION}.linux-amd64.tar.gz"
+RUN tar -C /usr/local -xzf "/tmp/go${GOLANG_VERSION}.linux-amd64.tar.gz"
+RUN rm "/tmp/go${GOLANG_VERSION}.linux-amd64.tar.gz"
+
+ENV GOPATH /go
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+
+# install opencv
 ARG OPENCV_VERSION="4.10.0"
 ENV OPENCV_VERSION $OPENCV_VERSION
 
