@@ -14,6 +14,9 @@
 FROM --platform=linux/amd64 ubuntu:22.04 AS opencv-base-amd64
 LABEL maintainer="hybridgroup"
 
+ENV TZ=UTC
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
       tzdata git build-essential cmake pkg-config wget unzip libgtk2.0-dev \
       curl ca-certificates libcurl4-openssl-dev libssl-dev \
@@ -72,6 +75,9 @@ RUN curl -Lo opencv.zip ${OPENCV_FILE} && \
 
 FROM --platform=linux/arm64 ubuntu:22.04 AS opencv-base-arm64
 LABEL maintainer="hybridgroup"
+
+ENV TZ=Europe/Madrid
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
       tzdata git build-essential cmake pkg-config wget unzip libgtk2.0-dev \
