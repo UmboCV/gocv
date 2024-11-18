@@ -11,6 +11,7 @@ AWS_CLI_VERSION=$(aws --version 2>&1 | cut -d " " -f1 | cut -d "/" -f2 | cut -c 
 docker buildx build --no-cache --pull \
   --platform linux/arm64 \
   -t "${IMAGE}" \
+  --build-arg OPENCV_VERSION=$OPENCV_VERSION \
   -f Dockerfile.umbo.debian .
 aws ecr get-login --no-include-email --region us-west-2 | bash
 # Push docker images
