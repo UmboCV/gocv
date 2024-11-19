@@ -106,9 +106,9 @@ FROM --platform=linux/arm64 opencv-base-arm64 AS opencv-build-arm64
 ARG GOLANG_VERSION="1.23.3"
 ENV GOLANG_VERSION=${GOLANG_VERSION}
 
-RUN wget -P /tmp "https://dl.google.com/go/go${GOLANG_VERSION}.linux-amd64.tar.gz"
-RUN tar -C /usr/local -xzf "/tmp/go${GOLANG_VERSION}.linux-amd64.tar.gz"
-RUN rm "/tmp/go${GOLANG_VERSION}.linux-amd64.tar.gz"
+RUN wget -P /tmp "https://dl.google.com/go/go${GOLANG_VERSION}.linux-arm64.tar.gz"
+RUN tar -C /usr/local -xzf "/tmp/go${GOLANG_VERSION}.linux-arm64.tar.gz"
+RUN rm "/tmp/go${GOLANG_VERSION}.linux-arm64.tar.gz"
 
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
