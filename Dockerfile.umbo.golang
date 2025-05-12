@@ -11,7 +11,7 @@
 # amd64 build stage
 ###################
 
-FROM --platform=linux/amd64 ubuntu:22.04 AS opencv-base-amd64
+FROM --platform=linux/amd64 ubuntu:24.04 AS opencv-base-amd64
 LABEL maintainer="hybridgroup"
 
 ENV TZ=UTC
@@ -20,7 +20,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt-get update && apt-get install -y --no-install-recommends \
       tzdata git build-essential cmake pkg-config wget unzip libgtk2.0-dev \
       curl ca-certificates libcurl4-openssl-dev libssl-dev \
-      libavcodec-dev libavformat-dev libswscale-dev libtbb2 libtbb-dev \
+      libavcodec-dev libavformat-dev libswscale-dev libtbbmalloc2 libtbb-dev \
       libharfbuzz-dev libfreetype6-dev \
       libjpeg-turbo8-dev libpng-dev libtiff-dev libdc1394-dev nasm && \
       rm -rf /var/lib/apt/lists/*
@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 FROM --platform=linux/amd64 opencv-base-amd64 AS opencv-build-amd64
 
 # install golang
-ARG GOLANG_VERSION="1.23.3"
+ARG GOLANG_VERSION="1.24.3"
 ENV GOLANG_VERSION=${GOLANG_VERSION}
 
 RUN wget -P /tmp "https://dl.google.com/go/go${GOLANG_VERSION}.linux-amd64.tar.gz"
@@ -40,7 +40,7 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 # install opencv
-ARG OPENCV_VERSION="4.10.0"
+ARG OPENCV_VERSION="4.11.0"
 ENV OPENCV_VERSION $OPENCV_VERSION
 
 ARG OPENCV_FILE="https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip"
@@ -86,7 +86,7 @@ RUN curl -Lo opencv.zip ${OPENCV_FILE} && \
 # arm64 build stage
 ###################
 
-FROM --platform=linux/arm64 ubuntu:22.04 AS opencv-base-arm64
+FROM --platform=linux/arm64 ubuntu:24.04 AS opencv-base-arm64
 LABEL maintainer="hybridgroup"
 
 ENV TZ=UTC
@@ -95,7 +95,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt-get update && apt-get install -y --no-install-recommends \
       tzdata git build-essential cmake pkg-config wget unzip libgtk2.0-dev \
       curl ca-certificates libcurl4-openssl-dev libssl-dev \
-      libavcodec-dev libavformat-dev libswscale-dev libtbb2 libtbb-dev \
+      libavcodec-dev libavformat-dev libswscale-dev libtbbmalloc2 libtbb-dev \
       libharfbuzz-dev libfreetype6-dev \
       libjpeg-turbo8-dev libpng-dev libtiff-dev libdc1394-dev nasm && \
       rm -rf /var/lib/apt/lists/*
@@ -103,7 +103,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 FROM --platform=linux/arm64 opencv-base-arm64 AS opencv-build-arm64
 
 # install golang
-ARG GOLANG_VERSION="1.23.3"
+ARG GOLANG_VERSION="1.24.3"
 ENV GOLANG_VERSION=${GOLANG_VERSION}
 
 RUN wget -P /tmp "https://dl.google.com/go/go${GOLANG_VERSION}.linux-arm64.tar.gz"
@@ -115,7 +115,7 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 # install opencv
-ARG OPENCV_VERSION="4.10.0"
+ARG OPENCV_VERSION="4.11.0"
 ENV OPENCV_VERSION $OPENCV_VERSION
 
 ARG OPENCV_FILE="https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip"

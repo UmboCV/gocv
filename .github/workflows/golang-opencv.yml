@@ -3,13 +3,13 @@ on:
   workflow_dispatch:
     inputs:
       golang:
-        description: 'golang version (ex: 1.23.3)'
+        description: 'golang version (ex: 1.24.3)'
         required: true
-        default: '1.23.3'
+        default: '1.24.3'
       opencv:
-        description: 'opencv version (ex: 4.10.0)'
+        description: 'opencv version (ex: 4.11.0)'
         required: true
-        default: '4.10.0'
+        default: '4.11.0'
 
 jobs:
   build-arm64:

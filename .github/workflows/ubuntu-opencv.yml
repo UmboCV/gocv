@@ -3,13 +3,13 @@ on:
   workflow_dispatch:
     inputs:
       ubuntu:
-        description: 'ubuntu version (ex: 22.04)'
+        description: 'ubuntu version (ex: 24.04)'
         required: true
-        default: '22.04'
+        default: '24.04'
       opencv:
-        description: 'opencv version (ex: 4.10.0)'
+        description: 'opencv version (ex: 4.11.0)'
         required: true
-        default: '4.10.0'
+        default: '4.11.0'
 
 jobs:
   build-arm64:
