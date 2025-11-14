@@ -7,9 +7,9 @@ on:
         required: true
         default: '24.04'
       opencv:
-        description: 'opencv version (ex: 4.11.0)'
+        description: 'opencv version (ex: 4.12.0)'
         required: true
-        default: '4.11.0'
+        default: '4.12.0'
 
 jobs:
   build-arm64:

@@ -3,11 +3,11 @@ on:
   workflow_dispatch:
     inputs:
       debian:
-        description: 'debian version (ex: 11)'
+        description: 'debian version (ex: 13)'
         required: true
-        default: '11'
+        default: '13'
       opencv:
-        description: 'opencv version (ex: 4.10.0)'
+        description: 'opencv version (ex: 4.12.0)'
         required: true
         default: '4.10.0'
 
