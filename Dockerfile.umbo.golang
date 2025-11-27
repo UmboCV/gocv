@@ -1,4 +1,4 @@
-FROM debian:13-slim AS opencv-base
+FROM golang:1.25-trixie AS opencv-base
 LABEL maintainer="hybridgroup"
 
 ENV TZ=UTC
@@ -20,14 +20,6 @@ ENV OPENCV_FILE $OPENCV_FILE
 
 ARG OPENCV_CONTRIB_FILE="https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.zip"
 ENV OPENCV_CONTRIB_FILE $OPENCV_CONTRIB_FILE
-
-# install golang
-ARG GOLANG_VERSION="1.24.3"
-ENV GOLANG_VERSION=${GOLANG_VERSION}
-
-RUN wget -P /tmp "https://dl.google.com/go/go${GOLANG_VERSION}.linux-amd64.tar.gz"
-RUN tar -C /usr/local -xzf "/tmp/go${GOLANG_VERSION}.linux-amd64.tar.gz"
-RUN rm "/tmp/go${GOLANG_VERSION}.linux-amd64.tar.gz"
 
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
