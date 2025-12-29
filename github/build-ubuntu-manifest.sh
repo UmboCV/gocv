@@ -6,7 +6,7 @@
 MANIFEST="774915305292.dkr.ecr.us-west-2.amazonaws.com/ubuntu-with-opencv:ubuntu-${UBUNTU_VERSION}-opencv-${OPENCV_VERSION}"
 IMAGE_ARM="774915305292.dkr.ecr.us-west-2.amazonaws.com/ubuntu-with-opencv:ubuntu-${UBUNTU_VERSION}-opencv-${OPENCV_VERSION}-arm64"
 IMAGE_AMD="774915305292.dkr.ecr.us-west-2.amazonaws.com/ubuntu-with-opencv:ubuntu-${UBUNTU_VERSION}-opencv-${OPENCV_VERSION}-amd64"
-aws ecr get-login-password --region "$AWS_REGION" docker login --username AWS --password-stdin "$ECR_REGISTRY"
+aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
 docker manifest rm "${MANIFEST}" || true
 docker manifest create "${MANIFEST}" \

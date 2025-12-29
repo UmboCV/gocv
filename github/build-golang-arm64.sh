@@ -14,7 +14,7 @@ docker buildx build --no-cache --pull \
   --build-arg GOLANG_VERSION=$GOLANG_VERSION \
   --build-arg OPENCV_VERSION=$OPENCV_VERSION \
   -f Dockerfile.umbo.golang .
-aws ecr get-login-password --region "$AWS_REGION" docker login --username AWS --password-stdin "$ECR_REGISTRY"
+aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
 # Push docker images
 docker push "${IMAGE}"
