@@ -7,7 +7,8 @@
 GIT_COMMIT_ID=$(git rev-parse HEAD | cut -c1-7)
 IMAGE="774915305292.dkr.ecr.us-west-2.amazonaws.com/ubuntu-with-opencv:ubuntu-${UBUNTU_VERSION}-opencv-${OPENCV_VERSION}-arm64"
 AWS_CLI_VERSION=$(aws --version 2>&1 | cut -d " " -f1 | cut -d "/" -f2 | cut -c 1)
-
+AWS_REGION=us-west-2
+ECR_REGISTRY=774915305292.dkr.ecr.us-west-2.amazonaws.com
 docker buildx build --pull \
   --platform linux/arm64 \
   -t "${IMAGE}" \

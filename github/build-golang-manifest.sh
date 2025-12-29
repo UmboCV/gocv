@@ -6,6 +6,8 @@
 MANIFEST="774915305292.dkr.ecr.us-west-2.amazonaws.com/golang-with-opencv:golang-${GOLANG_VERSION}-opencv-${OPENCV_VERSION}"
 IMAGE_ARM="774915305292.dkr.ecr.us-west-2.amazonaws.com/golang-with-opencv:golang-${GOLANG_VERSION}-opencv-${OPENCV_VERSION}-arm64"
 IMAGE_AMD="774915305292.dkr.ecr.us-west-2.amazonaws.com/golang-with-opencv:golang-${GOLANG_VERSION}-opencv-${OPENCV_VERSION}-amd64"
+AWS_REGION=us-west-2
+ECR_REGISTRY=774915305292.dkr.ecr.us-west-2.amazonaws.com
 aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
 docker manifest rm "${MANIFEST}" || true
