@@ -1,4 +1,5 @@
-FROM debian:13-slim AS opencv-base
+ARG DEBIAN_VERSION="13"
+FROM debian:${DEBIAN_VERSION}-slim AS opencv-base
 LABEL maintainer="hybridgroup"
 
 ENV TZ=UTC
@@ -12,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libjpeg62-turbo-dev libpng-dev libtiff-dev libdc1394-dev nasm && \
       rm -rf /var/lib/apt/lists/*
 
-ARG OPENCV_VERSION="4.12.0"
+ARG OPENCV_VERSION="4.13.0"
 ENV OPENCV_VERSION $OPENCV_VERSION
 
 ARG OPENCV_FILE="https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip"

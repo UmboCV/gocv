@@ -5,11 +5,11 @@ on:
       golang:
         description: 'golang version (ex: 1.24.3)'
         required: true
-        default: '1.24.3'
+        default: '1.27.3'
       opencv:
-        description: 'opencv version (ex: 4.12.0)'
+        description: 'opencv version (ex: 4.13.0)'
         required: true
-        default: '4.12.0'
+        default: '4.13.0'
 
 jobs:
   build-arm64:
