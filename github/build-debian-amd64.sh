@@ -12,6 +12,7 @@ ECR_REGISTRY=774915305292.dkr.ecr.us-west-2.amazonaws.com
 docker buildx build --pull --load \
   --platform linux/amd64 \
   -t "${IMAGE}" \
+  --build-arg DEBIAN_VERSION=$DEBIAN_VERSION \
   --build-arg OPENCV_VERSION=$OPENCV_VERSION \
   -f Dockerfile.umbo.debian .
 aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
