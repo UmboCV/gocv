@@ -1,0 +1,18 @@
+# To build:
+#   docker build -f Dockerfile-test.gpu-cuda-13 -t gocv-test-gpu-cuda-13 .
+#
+# To run tests:
+#   docker run -it --rm --gpus all gocv-test-gpu-cuda-13
+#
+FROM ghcr.io/hybridgroup/opencv:4.13.0-gpu-cuda-13 AS gocv-gpu-test-cuda-13
+
+ENV GOPATH /go
+ENV PATH="${PATH}:/go/bin"
+
+COPY . /go/src/gocv.io/x/gocv/
+
+WORKDIR /go/src/gocv.io/x/gocv
+
+RUN go install github.com/rakyll/gotest@latest
+
+ENTRYPOINT ["gotest", "-v", "./cuda/..."]

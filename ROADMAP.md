@@ -161,7 +161,7 @@ Your pull requests will be greatly appreciated!
         - [ ] [CharucoDetector](https://docs.opencv.org/4.x/d9/df5/classcv_1_1aruco_1_1CharucoDetector.html#ad7647d1c3d0e2db97bedc31f743e796b)
         - [ ] [detectBoard](https://docs.opencv.org/4.x/d9/df5/classcv_1_1aruco_1_1CharucoDetector.html#aacbea601612a3a0feaa45ebb7fb255fd)
         - [ ] [detectDiamonds](https://docs.opencv.org/4.x/d9/df5/classcv_1_1aruco_1_1CharucoDetector.html#a50342803f68deb1e6b0b79f61d4b1a73)
-        
+
 - [X] **dnn. Deep Neural Network module**
 - [ ] ml. Machine Learning
     - [ ] [ANN_MLP](https://docs.opencv.org/4.x/d0/dce/classcv_1_1ml_1_1ANN__MLP.html)
@@ -211,18 +211,11 @@ Your pull requests will be greatly appreciated!
         - [ ] [cv::cuda::pow](https://docs.opencv.org/4.x/d8/d34/group__cudaarithm__elem.html#ga82d04ef4bcc4dfa9bfbe76488007c6c4)
 
     - [ ] **matrix reductions - WORK STARTED** The following functions still need implementation:
-        - [ ] [cv::cuda::absSum](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#ga690fa79ba4426c53f7d2bebf3d37a32a)
-        - [ ] [cv::cuda::calcAbsSum](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#ga15c403b76ab2c4d7ed0f5edc09891b7e)
         - [ ] [cv::cuda::calcSqrSum](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#gac998c83597f6c206c78cee16aa87946f)
         - [ ] [cv::cuda::calcSum](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#ga98a09144047f09f5cb1d6b6ea8e0856f)
         - [ ] [cv::cuda::countNonZero](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#ga98a09144047f09f5cb1d6b6ea8e0856f)
-        - [ ] [cv::cuda::findMinMax](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#gae7f5f2aa9f65314470a76fccdff887f2)
-        - [ ] [cv::cuda::findMinMaxLoc](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#ga93916bc473a62d215d1130fab84d090a)
         - [ ] [cv::cuda::integral](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#ga07e5104eba4bf45212ac9dbc5bf72ba6)
         - [ ] [cv::cuda::meanStdDev](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#ga990a4db4c6d7e8f0f3a6685ba48fbddc)
-        - [ ] [cv::cuda::minMax](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#ga8d7de68c10717cf25e787e3c20d2dfee)
-        - [ ] [cv::cuda::minMaxLoc](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#ga5cacbc2a2323c4eaa81e7390c5d9f530)
-        - [ ] [cv::cuda::normalize](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#ga4da4738b9956a5baaa2f5f8c2fba438a)
         - [ ] [cv::cuda::rectStdDev](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#gac311484a4e57cab2ce2cfdc195fda7ee)
         - [ ] [cv::cuda::reduce](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#ga21d57f661db7be093caf2c4378be2007)
         - [ ] [cv::cuda::sqrIntegral](https://docs.opencv.org/4.x/d5/de6/group__cudaarithm__reduce.html#ga40c75196202706399a60bf6ba7a052ac)
@@ -312,7 +305,7 @@ Your pull requests will be greatly appreciated!
 - [X] **img_hash. The module brings implementations of different image hashing algorithms.**
 - [ ] intensity_transform. The module brings implementations of intensity transformation algorithms to adjust image contrast.
 - [ ] line_descriptor. Binary descriptors for lines extracted from an image
-- [ ] mcc. Macbeth Chart module
+- [X] **mcc. Macbeth Chart module**
 - [ ] optflow. Optical Flow Algorithms
 - [ ] ovis. OGRE 3D Visualiser
 - [ ] phase_unwrapping. Phase Unwrapping API
