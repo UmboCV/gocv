@@ -1,0 +1,109 @@
+ARG DEBIAN_VERSION="13"
+
+###################
+# build stage
+###################
+FROM debian:${DEBIAN_VERSION}-slim AS opencv-builder
+LABEL maintainer="hybridgroup"
+
+ENV TZ=UTC
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# videoio ffmpeg backend (VideoCapture/VideoWriter on files and streams), set to OFF if unused
+ARG WITH_FFMPEG="ON"
+
+# no gtk, tiff, dc1394, curl/ssl compared to Dockerfile.umbo.debian
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      tzdata git build-essential cmake pkg-config unzip \
+      curl ca-certificates \
+      libtbbmalloc2 libtbb-dev \
+      libharfbuzz-dev libfreetype-dev \
+      libjpeg62-turbo-dev libpng-dev nasm \
+      $([ "$WITH_FFMPEG" = "ON" ] && echo libavcodec-dev libavformat-dev libswscale-dev) && \
+      rm -rf /var/lib/apt/lists/*
+
+ARG OPENCV_VERSION="4.13.0"
+ENV OPENCV_VERSION $OPENCV_VERSION
+
+ARG OPENCV_FILE="https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip"
+ENV OPENCV_FILE $OPENCV_FILE
+
+ARG OPENCV_CONTRIB_FILE="https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.zip"
+ENV OPENCV_CONTRIB_FILE $OPENCV_CONTRIB_FILE
+
+RUN curl -Lo opencv.zip ${OPENCV_FILE} && \
+      unzip -q opencv.zip && \
+      curl -Lo opencv_contrib.zip ${OPENCV_CONTRIB_FILE} && \
+      unzip -q opencv_contrib.zip && \
+      rm opencv.zip opencv_contrib.zip && \
+      cd opencv-${OPENCV_VERSION} && \
+      mkdir build && cd build && \
+      cmake -D CMAKE_BUILD_TYPE=RELEASE \
+      -D WITH_IPP=OFF \
+      -D WITH_OPENGL=OFF \
+      -D WITH_QT=OFF \
+      -D WITH_GTK=OFF \
+      -D WITH_TIFF=OFF \
+      -D WITH_1394=OFF \
+      -D WITH_FFMPEG=${WITH_FFMPEG} \
+      -D WITH_FREETYPE=ON \
+      -D FREETYPE_INCLUDE_DIRS=/usr/include/freetype2 \
+      -D CMAKE_INSTALL_PREFIX=/usr/local \
+      -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-${OPENCV_VERSION}/modules \
+      -D OPENCV_ENABLE_NONFREE=ON \
+      -D WITH_JASPER=OFF \
+      -D WITH_TBB=ON \
+      -D BUILD_JPEG=ON \
+      -D WITH_SIMD=ON \
+      -D ENABLE_LIBJPEG_TURBO_SIMD=ON \
+      -D BUILD_DOCS=OFF \
+      -D BUILD_EXAMPLES=OFF \
+      -D BUILD_TESTS=OFF \
+      -D BUILD_PERF_TESTS=OFF \
+      -D BUILD_opencv_java=NO \
+      -D BUILD_opencv_python=NO \
+      -D BUILD_opencv_python2=NO \
+      -D BUILD_opencv_python3=NO \
+      -D OPENCV_GENERATE_PKGCONFIG=ON .. && \
+      make -j $(nproc --all) && \
+      make preinstall && make install && ldconfig && \
+      cd / && rm -rf opencv*
+
+# resolve the debian packages that provide the shared libs opencv links against
+RUN find /usr/local/lib /usr/local/bin -type f | xargs ldd 2>/dev/null \
+      | awk '/=> \// {print $3}' | grep -v '^/usr/local/' | sort -u \
+      | while read -r lib; do \
+          real=$(realpath "$lib"); \
+          dpkg -S "$real" 2>/dev/null || dpkg -S "${real#/usr}" 2>/dev/null \
+            || echo "WARN: no package owns $lib" >&2; \
+        done \
+      | cut -d: -f1 | sort -u > /usr/local/share/opencv-runtime-packages.txt && \
+      test -s /usr/local/share/opencv-runtime-packages.txt && \
+      cat /usr/local/share/opencv-runtime-packages.txt
+
+###################
+# runtime stage
+###################
+FROM debian:${DEBIAN_VERSION}-slim AS opencv-runtime
+LABEL maintainer="hybridgroup"
+
+ENV TZ=UTC
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+COPY --from=opencv-builder /usr/local/lib /usr/local/lib
+COPY --from=opencv-builder /usr/local/bin /usr/local/bin
+COPY --from=opencv-builder /usr/local/share /usr/local/share
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      tzdata ca-certificates $(cat /usr/local/share/opencv-runtime-packages.txt) && \
+      rm -rf /var/lib/apt/lists/* && \
+      ldconfig
+
+# fail the build if any opencv lib is missing a runtime dependency
+RUN ! (find /usr/local/lib /usr/local/bin -type f | xargs ldd 2>/dev/null | grep "not found") && \
+      opencv_version
+
+ARG OPENCV_VERSION="4.13.0"
+ENV OPENCV_VERSION $OPENCV_VERSION
+
+CMD ["opencv_version", "-b"]
